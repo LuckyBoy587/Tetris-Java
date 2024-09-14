@@ -4,8 +4,7 @@ import java.util.Random;
 
 public class MainPanel extends JPanel {
     BoxMatrix matrix;
-    public FallingShape fallingShape;
-    public FallingShape fallingShapeShadow;
+    public FallingShape fallingShape, fallingShapeShadow;
     private Timer timer;
     private final Random random = new Random();
     private static final int FPS = 60;
