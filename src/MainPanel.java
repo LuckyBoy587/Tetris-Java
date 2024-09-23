@@ -9,6 +9,7 @@ public class MainPanel extends JPanel {
     private final Random random = new Random();
     private static final int FPS = 60;
     private int frameCount = 0;
+    private int score = 0;
 
     public MainPanel() {
         matrix = new BoxMatrix();
@@ -24,11 +25,11 @@ public class MainPanel extends JPanel {
                 if (fallingShape.hasHitBottom() || matrix.hasCollidedBottomWith(fallingShape)) {
                     try {
                         matrix.addShape(fallingShape);
+                        createFallingShape();
                     } catch (IndexOutOfBoundsException e) {
                         System.out.println("Game Over");
                         timer.stop();
                     }
-                    createFallingShape();
                 }
             }
             if (KeyHandler.leftPressed) {
@@ -59,8 +60,11 @@ public class MainPanel extends JPanel {
             }
 
             if (KeyHandler.spacePressed) {
-                fallingShape.rotate();
-                createFallingShapeShadow();
+                RotatedFallingShape rotatedFallingShape = new RotatedFallingShape(fallingShape);
+                if (!(rotatedFallingShape.isOutOfBounds() || matrix.intersectsWith(rotatedFallingShape))) {
+                    fallingShape = rotatedFallingShape;
+                    createFallingShapeShadow();
+                }
                 KeyHandler.spacePressed = false;
             }
             repaint();
@@ -108,12 +112,14 @@ public class MainPanel extends JPanel {
     }
 
     private void createFallingShape() {
+        while (matrix.deleteLine()) score += 100 * MainBoard.HORIZONTAL_BOX_COUNT;
         fallingShape = getRandomFallingShape(random.nextInt(8) + 1);
         createFallingShapeShadow();
+        score += 400;
+        System.out.println("Score: " + score);
     }
 
     private void createFallingShapeShadow() {
-        matrix.deleteLine();
         fallingShapeShadow = new FallingShapeShadow(fallingShape);
         while (!(fallingShapeShadow.hasHitBottom() || matrix.hasCollidedBottomWith(fallingShapeShadow))) {
             fallingShapeShadow.moveDown1Block();

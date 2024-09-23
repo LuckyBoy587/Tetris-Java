@@ -36,7 +36,7 @@ public class BoxMatrix {
         }
     }
 
-    public void deleteLine() {
+    public boolean deleteLine() {
         for (int y = 0; y < m; y++) {
             if (isCompleteLine(boxes[y])) {
                 for (int i = y; i > 0; i--) {
@@ -49,10 +49,10 @@ public class BoxMatrix {
                 for (int x = 0; x < n; x++) {
                     boxes[0][x] = new Box(x, 0);
                 }
-                deleteLine();
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     private static boolean isCompleteLine(Box[] boxRow) {
@@ -83,6 +83,13 @@ public class BoxMatrix {
             if (box.isVisible() && !boxes[box.getY()][box.getX() + 1].isEmpty) return true;
         }
 
+        return false;
+    }
+
+    public boolean intersectsWith(FallingShape shape) {
+        for (Box box: shape.boxList) {
+            if (box.isVisible() && !boxes[box.getY()][box.getX()].isEmpty) return true;
+        }
         return false;
     }
 }
